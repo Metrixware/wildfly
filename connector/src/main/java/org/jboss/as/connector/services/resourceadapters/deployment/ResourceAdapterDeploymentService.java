@@ -67,7 +67,8 @@ import org.wildfly.security.manager.WildFlySecurityManager;
 public final class ResourceAdapterDeploymentService extends AbstractResourceAdapterDeploymentService implements
         Service<ResourceAdapterDeployment> {
 
-    private static final DeployersLogger DEPLOYERS_LOGGER = Logger.getMessageLogger(DeployersLogger.class, "org.jboss.as.connector.deployers.RADeployer");
+//  private static final DeployersLogger DEPLOYERS_LOGGER = Logger.getMessageLogger(DeployersLogger.class, "org.jboss.as.connector.deployers.RADeployer");
+  private static final DeployersLogger DEPLOYERS_LOGGER =  Logger.getMessageLogger(DeployersLogger.class, ResourceAdapterDeploymentService.class.getName());
 
     private final ClassLoader classLoader;
     private final ConnectorXmlDescriptor connectorXmlDescriptor;
@@ -213,6 +214,7 @@ public final class ResourceAdapterDeploymentService extends AbstractResourceAdap
 
         @Override
         protected boolean checkActivation(Connector cmd, IronJacamar ijmd) {
+            getLogger().tracef("checkActivation");
             if (cmd != null) {
                 Set<String> raMcfClasses = new HashSet<String>();
                 Set<String> raAoClasses = new HashSet<String>();
@@ -222,6 +224,7 @@ public final class ResourceAdapterDeploymentService extends AbstractResourceAdap
                     raMcfClasses.add(ra10.getManagedConnectionFactoryClass().getValue());
                 } else {
                     ResourceAdapter1516 ra = (ResourceAdapter1516) cmd.getResourceadapter();
+                    getLogger().tracef("ResourceAdapter1516 ra=" + ra.toString());
                     if (ra != null && ra.getOutboundResourceadapter() != null &&
                         ra.getOutboundResourceadapter().getConnectionDefinitions() != null) {
                         List<ConnectionDefinition> cdMetas = ra.getOutboundResourceadapter().getConnectionDefinitions();
@@ -247,6 +250,7 @@ public final class ResourceAdapterDeploymentService extends AbstractResourceAdap
                 }
 
                 if (ijmd != null) {
+                    getLogger().tracef("IronJacamar ijmd=" + ijmd.toString());
                     if (ijmd.getConnectionDefinitions() != null) {
                         for (org.jboss.jca.common.api.metadata.common.CommonConnDef def : ijmd.getConnectionDefinitions()) {
                             String clz = def.getClassName();
@@ -265,6 +269,7 @@ public final class ResourceAdapterDeploymentService extends AbstractResourceAdap
                         }
                     }
                 }
+                return true;
             }
 
             return false;
